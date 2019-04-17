@@ -3,14 +3,15 @@ module Vertex exposing (Vertex, fragmentShader, mesh, perspective, vertexShader)
 import Circle exposing (Circle)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
+import Screen
 import WebGL exposing (Mesh, Shader)
 
 
 perspective : Mat4
 perspective =
     Mat4.mul
-        (Mat4.makePerspective 100 1 0.01 100)
-        (Mat4.makeLookAt (vec3 0 0 6) (vec3 0 0 0) (vec3 0 1 0))
+        (Mat4.makePerspective Screen.width 0.75 0.01 (Screen.height * 2))
+        (Mat4.makeLookAt (vec3 (Screen.width / 2) (Screen.height / 2) (Screen.width / 3.3)) (vec3 (Screen.width / 2) (Screen.height / 2) 0) (vec3 (Screen.width / 2) -9999 9999))
 
 
 type alias Vertex =
@@ -19,14 +20,23 @@ type alias Vertex =
     }
 
 
+cylinder x y color =
+    let
+        darkerColor =
+            color / 2
+
+        height =
+            Circle.radius / 5
+    in
+    circle x y 0 Circle.radius 100 (vec3 0.1 0.1 0.1)
+        |> (++) (circle x y height Circle.radius 100 <| vec3 color color color)
+        |> (++) (tube x y 0 height Circle.radius 100 <| vec3 darkerColor darkerColor darkerColor)
+
+
 mesh : Circle -> Circle -> Mesh Vertex
 mesh striker puck =
-    circle striker.x striker.y 0 1 100 (vec3 0.1 0.1 0.1)
-        |> (++) (circle striker.x striker.y 0.2 1 100 <| vec3 0.3 0.3 0.3)
-        |> (++) (tube striker.x striker.y 0 0.2 1 100 <| vec3 0.15 0.15 0.15)
-        |> (++) (circle puck.x puck.y 0.2 1 100 <| vec3 1 0 0)
-        |> (++) (circle puck.x puck.y 0 1 100 <| vec3 1 0 0)
-        |> (++) (tube puck.x puck.y 0 0.2 1 100 <| vec3 0.5 0 0)
+    cylinder striker.x striker.y 0.3
+        |> (++) (cylinder puck.x puck.y 0.5)
         |> WebGL.triangles
 
 

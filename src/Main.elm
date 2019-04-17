@@ -7,6 +7,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (height, style, width)
 import Json.Decode as Decode exposing (Value)
 import Mouse
+import Screen
 import Time
 import Vertex
 import WebGL exposing (Mesh)
@@ -22,7 +23,7 @@ main =
     Browser.element
         { init =
             \_ ->
-                ( Model (Circle 0 0 0 0) (Circle 100 200 0 0) (Mouse.MouseMove 0 0)
+                ( Model (Circle 0 0 0 0) (Circle (Screen.width / 2 - Circle.radius) (Screen.height / 2 - Circle.radius) 0 0) (Mouse.MouseMove 0 0)
                 , Cmd.none
                 )
         , view = view
@@ -71,13 +72,13 @@ update msg model =
 view : Model -> Html msg
 view { striker, puck } =
     WebGL.toHtml
-        [ width 600
-        , height 600
+        [ width Screen.width
+        , height Screen.height
         , style "display" "block"
         ]
         [ WebGL.entity
             Vertex.vertexShader
             Vertex.fragmentShader
-            (Vertex.mesh (Circle.transformToMagicRatio striker) (Circle.transformToMagicRatio puck))
+            (Vertex.mesh striker puck)
             { perspective = Vertex.perspective }
         ]

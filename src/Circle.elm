@@ -1,4 +1,6 @@
-module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, transformToMagicRatio, updateCircleWithMouse, updateCircleWithSpeed)
+module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, radius, updateCircleWithMouse, updateCircleWithSpeed)
+
+import Screen
 
 
 type alias Circle =
@@ -9,12 +11,12 @@ type alias Circle =
     }
 
 
-magicRadius =
-    50
+radius =
+    20
 
 
 updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
-    Circle (toFloat clientX) (toFloat clientY) xSpeed ySpeed
+    Circle (toFloat clientX) (toFloat -clientY |> (+) Screen.width) xSpeed ySpeed
 
 
 updateCircleWithSpeed oldCircle newCircle =
@@ -37,7 +39,7 @@ circlesCollide c1 c2 =
         hypot =
             sqrt (xDiff ^ 2 + yDiff ^ 2)
     in
-    (hypot - magicRadius - magicRadius) <= 0
+    (hypot - radius - radius) <= 0
 
 
 handlePotentialStrikes striker puck =
@@ -46,14 +48,6 @@ handlePotentialStrikes striker puck =
 
     else
         puck
-
-
-magicRatio num =
-    (num / 50) - 6
-
-
-transformToMagicRatio { x, y, xSpeed, ySpeed } =
-    Circle (magicRatio x) (magicRatio y * -1) (magicRatio xSpeed) (magicRatio ySpeed)
 
 
 strikePuck puck striker =
