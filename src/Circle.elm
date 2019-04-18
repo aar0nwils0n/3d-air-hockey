@@ -1,5 +1,6 @@
 module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, radius, updateCircleWithMouse, updateCircleWithSpeed)
 
+import Board
 import Screen
 
 
@@ -23,8 +24,44 @@ updateCircleWithSpeed oldCircle newCircle =
     { newCircle | xSpeed = newCircle.x - oldCircle.x, ySpeed = newCircle.y - oldCircle.y }
 
 
+slowDownButDontReverse speed =
+    if speed <= 0.5 && speed >= 0 || speed >= -0.5 && speed <= 0 then
+        0
+
+    else if speed > 0 then
+        speed - 0.5
+
+    else if speed < 0 then
+        speed + 0.5
+
+    else
+        speed
+
+
 incrementCirclePosition { x, y, xSpeed, ySpeed } =
-    Circle (x + xSpeed) (y + ySpeed) xSpeed ySpeed
+    let
+        newXspeed =
+            (if x >= Board.right - radius || x <= Board.left + radius then
+                -xSpeed
+
+             else
+                xSpeed
+            )
+                |> slowDownButDontReverse
+
+        newYSpeed =
+            (if y >= Board.top - radius || y <= Board.bottom + radius then
+                -ySpeed
+
+             else
+                ySpeed
+            )
+                |> slowDownButDontReverse
+    in
+    Circle (x + newXspeed)
+        (y + newYSpeed)
+        newXspeed
+        newYSpeed
 
 
 circlesCollide : Circle -> Circle -> Bool
@@ -57,9 +94,9 @@ strikePuck puck striker =
     in
     { puck
         | xSpeed =
-            (cos angle * -(striker.xSpeed + abs puck.xSpeed))
+            (cos angle * -(abs striker.xSpeed + abs puck.xSpeed))
                 - (cos angle * abs puck.ySpeed)
         , ySpeed =
-            (sin angle * -(striker.ySpeed + abs puck.ySpeed))
+            (sin angle * -(abs striker.ySpeed + abs puck.ySpeed))
                 - (sin angle * abs puck.xSpeed)
     }

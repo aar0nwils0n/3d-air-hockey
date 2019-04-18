@@ -1,5 +1,6 @@
 module Vertex exposing (Vertex, fragmentShader, mesh, perspective, vertexShader)
 
+import Board
 import Circle exposing (Circle)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector3 as Vec3 exposing (Vec3, vec3)
@@ -37,7 +38,27 @@ mesh : Circle -> Circle -> Mesh Vertex
 mesh striker puck =
     cylinder striker.x striker.y 0.3
         |> (++) (cylinder puck.x puck.y 0.5)
+        |> (++) board
         |> WebGL.triangles
+
+
+board =
+    let
+        bottomColor =
+            vec3 0.95 0.95 0.95
+
+        sideColor =
+            vec3 0.9 0.9 0.9
+    in
+    [ ( Vertex (vec3 Board.left Board.top 0) bottomColor
+      , Vertex (vec3 Board.left Board.bottom 0) bottomColor
+      , Vertex (vec3 Board.right Board.bottom 0) bottomColor
+      )
+    , ( Vertex (vec3 Board.right Board.bottom 0) bottomColor
+      , Vertex (vec3 Board.left Board.top 0) bottomColor
+      , Vertex (vec3 Board.right Board.top 0) bottomColor
+      )
+    ]
 
 
 rect x y w h =
