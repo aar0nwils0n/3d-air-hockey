@@ -13,7 +13,7 @@ type alias Circle =
 
 
 radius =
-    10
+    15
 
 
 updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
@@ -52,14 +52,14 @@ updateCircleWithSpeed oldCircle newCircle =
 
 
 slowDownButDontReverse speed =
-    if speed <= 0.5 && speed >= 0 || speed >= -0.5 && speed <= 0 then
+    if speed <= 0.25 && speed >= 0 || speed >= -0.25 && speed <= 0 then
         0
 
     else if speed > 0 then
-        speed - 0.5
+        speed - 0.25
 
     else if speed < 0 then
-        speed + 0.5
+        speed + 0.25
 
     else
         speed
@@ -84,9 +84,35 @@ incrementCirclePosition { x, y, xSpeed, ySpeed } =
                 ySpeed
             )
                 |> slowDownButDontReverse
+
+        increasedX =
+            x + newXSpeed
+
+        newX =
+            if increasedX > Board.right - radius then
+                Board.right - radius
+
+            else if increasedX < Board.left + radius then
+                Board.left + radius
+
+            else
+                increasedX
+
+        increasedY =
+            y + newYSpeed
+
+        newY =
+            if increasedY > Board.top - radius then
+                Board.top - radius
+
+            else if increasedY < Board.bottom + radius then
+                Board.bottom + radius
+
+            else
+                increasedY
     in
-    Circle (x + newXSpeed)
-        (y + newYSpeed)
+    Circle (newX + newXSpeed)
+        newY
         newXSpeed
         newYSpeed
 
@@ -118,6 +144,8 @@ strikePuck puck striker =
     let
         angle =
             atan2 (striker.y - puck.y) (striker.x - puck.x)
+
+        -- todo get total speed on the vecor rather than splitting x and y
     in
     { puck
         | xSpeed =
