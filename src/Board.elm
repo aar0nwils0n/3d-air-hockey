@@ -4,16 +4,16 @@ import Screen
 
 
 top =
-    Screen.height * 0.9
+    Screen.width * 0.9
 
 
 bottom =
-    Screen.height * 0.1
+    Screen.width * 0.1
 
 
 left =
-    Screen.width * 0.2
+    Screen.width * 0.3
 
 
 right =
-    Screen.width * 0.8
+    Screen.width * 0.7

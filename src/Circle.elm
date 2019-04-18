@@ -13,11 +13,38 @@ type alias Circle =
 
 
 radius =
-    20
+    10
 
 
 updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
-    Circle (toFloat clientX) (toFloat -clientY |> (+) Screen.width) xSpeed ySpeed
+    let
+        clientXFloat =
+            toFloat clientX
+
+        newX =
+            if clientXFloat < Board.left + radius then
+                Board.left + radius
+
+            else if clientXFloat > Board.right - radius then
+                Board.right - radius
+
+            else
+                clientXFloat
+
+        clientYFloat =
+            toFloat -clientY |> (+) Screen.width
+
+        newY =
+            if clientYFloat < Board.bottom + radius then
+                Board.bottom + radius
+
+            else if clientYFloat > Board.top - radius then
+                Board.top - radius
+
+            else
+                clientYFloat
+    in
+    Circle newX newY xSpeed ySpeed
 
 
 updateCircleWithSpeed oldCircle newCircle =
@@ -40,7 +67,7 @@ slowDownButDontReverse speed =
 
 incrementCirclePosition { x, y, xSpeed, ySpeed } =
     let
-        newXspeed =
+        newXSpeed =
             (if x >= Board.right - radius || x <= Board.left + radius then
                 -xSpeed
 
@@ -58,9 +85,9 @@ incrementCirclePosition { x, y, xSpeed, ySpeed } =
             )
                 |> slowDownButDontReverse
     in
-    Circle (x + newXspeed)
+    Circle (x + newXSpeed)
         (y + newYSpeed)
-        newXspeed
+        newXSpeed
         newYSpeed
 
 
