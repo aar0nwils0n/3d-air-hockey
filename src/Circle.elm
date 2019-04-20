@@ -203,9 +203,15 @@ strikePuck puck striker =
     in
     { puck
         | xSpeed =
-            (cos angle * -(totalStrikerSpeed + abs puck.xSpeed))
-                - (cos angle * abs puck.ySpeed)
+            clamp (Screen.width * -0.025)
+                (Screen.width * 0.025)
+            <|
+                (cos angle * -(totalStrikerSpeed + abs puck.xSpeed))
+                    - (cos angle * abs puck.ySpeed)
         , ySpeed =
-            (sin angle * -(totalStrikerSpeed + abs puck.ySpeed))
-                - (sin angle * abs puck.xSpeed)
+            clamp (Screen.width * -0.025)
+                (Screen.width * 0.025)
+            <|
+                (sin angle * -(totalStrikerSpeed + abs puck.ySpeed))
+                    - (sin angle * abs puck.xSpeed)
     }

@@ -12,7 +12,7 @@ perspective : Mat4
 perspective =
     Mat4.mul
         (Mat4.makePerspective Screen.width 0.75 0.01 (Screen.height * 2))
-        (Mat4.makeLookAt (vec3 (Screen.width / 2) (Screen.height / 2) (Screen.width / 3.3)) (vec3 (Screen.width / 2) (Screen.height / 2) 0) (vec3 (Screen.width / 2) -9999 9999))
+        (Mat4.makeLookAt (vec3 (Screen.width / 2) (Screen.height / 2) (Screen.width / 3.6)) (vec3 (Screen.width / 2) (Screen.height / 2) 0) (vec3 (Screen.width / 2) -9999 9999))
 
 
 type alias Vertex =
