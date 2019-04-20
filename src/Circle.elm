@@ -1,4 +1,4 @@
-module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, radius, updateCircleWithMouse, updateCircleWithSpeed)
+module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, radius, slowDown, updateCircleWithMouse, updateCircleWithSpeed)
 
 import Board
 import Screen
@@ -65,25 +65,76 @@ slowDownButDontReverse speed =
         speed
 
 
-incrementCirclePosition { x, y, xSpeed, ySpeed } =
-    let
-        newXSpeed =
-            (if x >= Board.right - radius || x <= Board.left + radius then
-                -xSpeed
+pythag a b =
+    sqrt (abs a ^ 2 + abs b ^ 2)
 
-             else
-                xSpeed
-            )
-                |> slowDownButDontReverse
+
+nanTo0 x =
+    if isNaN x then
+        0
+
+    else
+        x
+
+
+slowDown xSpeed ySpeed =
+    let
+        hypot =
+            pythag xSpeed ySpeed
+
+        hypot2 =
+            slowDownButDontReverse hypot
+
+        angle =
+            atan (xSpeed / ySpeed)
+
+        newXSpeed =
+            (abs <| sin angle)
+                * hypot2
+                * (if xSpeed < 0 then
+                    -1
+
+                   else
+                    1
+                  )
 
         newYSpeed =
-            (if y >= Board.top - radius || y <= Board.bottom + radius then
-                -ySpeed
+            (abs <| cos angle)
+                * hypot2
+                * (if ySpeed < 0 then
+                    -1
 
-             else
-                ySpeed
-            )
-                |> slowDownButDontReverse
+                   else
+                    1
+                  )
+    in
+    ( nanTo0 newXSpeed, nanTo0 newYSpeed )
+
+
+incrementCirclePosition { x, y, xSpeed, ySpeed } =
+    let
+        ( newXSpeed, newYSpeed ) =
+            slowDown xSpeed ySpeed
+
+        incrementedX =
+            x + xSpeed
+
+        incrementedY =
+            y + ySpeed
+
+        newXSpeed2 =
+            if incrementedX >= Board.right - radius || incrementedX <= Board.left + radius then
+                -newXSpeed
+
+            else
+                newXSpeed
+
+        newYSpeed2 =
+            if incrementedY >= Board.top - radius || incrementedY <= Board.bottom + radius then
+                -newYSpeed
+
+            else
+                newYSpeed
 
         increasedX =
             x + newXSpeed
@@ -111,10 +162,10 @@ incrementCirclePosition { x, y, xSpeed, ySpeed } =
             else
                 increasedY
     in
-    Circle (newX + newXSpeed)
-        newY
-        newXSpeed
-        newYSpeed
+    Circle (newX + newXSpeed2)
+        (newY + newYSpeed2)
+        newXSpeed2
+        newYSpeed2
 
 
 circlesCollide : Circle -> Circle -> Bool
@@ -145,13 +196,16 @@ strikePuck puck striker =
         angle =
             atan2 (striker.y - puck.y) (striker.x - puck.x)
 
+        totalStrikerSpeed =
+            sqrt (abs striker.xSpeed ^ 2 + abs striker.ySpeed ^ 2)
+
         -- todo get total speed on the vecor rather than splitting x and y
     in
     { puck
         | xSpeed =
-            (cos angle * -(abs striker.xSpeed + abs puck.xSpeed))
+            (cos angle * -(totalStrikerSpeed + abs puck.xSpeed))
                 - (cos angle * abs puck.ySpeed)
         , ySpeed =
-            (sin angle * -(abs striker.ySpeed + abs puck.ySpeed))
+            (sin angle * -(totalStrikerSpeed + abs puck.ySpeed))
                 - (sin angle * abs puck.xSpeed)
     }
