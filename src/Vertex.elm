@@ -12,7 +12,11 @@ perspective : Mat4
 perspective =
     Mat4.mul
         (Mat4.makePerspective Screen.width 0.75 0.01 (Screen.height * 2))
-        (Mat4.makeLookAt (vec3 (Screen.width / 2) (Screen.height / 2) (Screen.width / 3.6)) (vec3 (Screen.width / 2) (Screen.height / 2) 0) (vec3 (Screen.width / 2) -9999 9999))
+        (Mat4.makeLookAt
+            (vec3 (Screen.width / 2) (Screen.height / 2) (Screen.width / 3.6))
+            (vec3 (Screen.width / 2) (Screen.height / 2) 0)
+            (vec3 (Screen.width / 2) -9999 9999)
+        )
 
 
 type alias Vertex =
@@ -21,23 +25,23 @@ type alias Vertex =
     }
 
 
-cylinder x y color =
+cylinder x y r g b =
     let
-        darkerColor =
-            color / 2
+        ( r2, g2, b2 ) =
+            ( r / 2, g / 2, g / 2 )
 
         height =
             Circle.radius / 5
     in
     circle x y 0 Circle.radius 100 (vec3 0.1 0.1 0.1)
-        |> (++) (circle x y height Circle.radius 100 <| vec3 color color color)
-        |> (++) (tube x y 0 height Circle.radius 100 <| vec3 darkerColor darkerColor darkerColor)
+        |> (++) (circle x y height Circle.radius 100 <| vec3 r g b)
+        |> (++) (tube x y 0 height Circle.radius 100 <| vec3 r2 g2 b2)
 
 
 mesh : Circle -> Circle -> Mesh Vertex
 mesh striker puck =
-    cylinder striker.x striker.y 0.3
-        |> (++) (cylinder puck.x puck.y 0.5)
+    cylinder striker.x striker.y 0.9 0.25 0.25
+        |> (++) (cylinder puck.x puck.y 0.2 0.7 0.2)
         |> (++) board
         |> WebGL.triangles
 
@@ -45,18 +49,76 @@ mesh striker puck =
 board =
     let
         bottomColor =
-            vec3 0.95 0.95 0.95
+            vec3 0.25 0 0.5
 
         sideColor =
-            vec3 0.9 0.9 0.9
+            vec3 0.25 0.9 0.5
+
+        sideColor2 =
+            vec3 0.2 0.85 0.5
+
+        sideColor3 =
+            vec3 0.16 0.82 0.5
+
+        sideColor4 =
+            vec3 0.12 0.77 0.5
+
+        backdrop =
+            vec3 0 0 0
     in
-    [ ( Vertex (vec3 Board.left Board.top 0) bottomColor
+    [ --flor
+      ( Vertex (vec3 Board.left Board.top 0) bottomColor
       , Vertex (vec3 Board.left Board.bottom 0) bottomColor
       , Vertex (vec3 Board.right Board.bottom 0) bottomColor
       )
     , ( Vertex (vec3 Board.right Board.bottom 0) bottomColor
       , Vertex (vec3 Board.left Board.top 0) bottomColor
       , Vertex (vec3 Board.right Board.top 0) bottomColor
+      )
+    , --top
+      ( Vertex (vec3 Board.left Board.top 0) sideColor2
+      , Vertex (vec3 Board.right Board.top 0) sideColor2
+      , Vertex (vec3 Board.left Board.top 10) sideColor2
+      )
+    , ( Vertex (vec3 Board.left Board.top 10) sideColor2
+      , Vertex (vec3 Board.right Board.top 10) sideColor2
+      , Vertex (vec3 Board.right Board.top 0) sideColor2
+      )
+    , --bottom
+      ( Vertex (vec3 Board.left Board.bottom 0) sideColor2
+      , Vertex (vec3 Board.right Board.bottom 0) sideColor2
+      , Vertex (vec3 Board.left Board.bottom 10) sideColor2
+      )
+    , ( Vertex (vec3 Board.left Board.bottom 10) sideColor2
+      , Vertex (vec3 Board.right Board.bottom 10) sideColor2
+      , Vertex (vec3 Board.right Board.bottom 0) sideColor2
+      )
+    , --left
+      ( Vertex (vec3 Board.left Board.top 0) sideColor4
+      , Vertex (vec3 Board.left Board.bottom 0) sideColor4
+      , Vertex (vec3 Board.left Board.top 10) sideColor4
+      )
+    , ( Vertex (vec3 Board.left Board.top 10) sideColor4
+      , Vertex (vec3 Board.left Board.bottom 0) sideColor4
+      , Vertex (vec3 Board.left Board.bottom 10) sideColor4
+      )
+    , --right
+      ( Vertex (vec3 Board.right Board.top 0) sideColor4
+      , Vertex (vec3 Board.right Board.bottom 0) sideColor4
+      , Vertex (vec3 Board.right Board.top 10) sideColor4
+      )
+    , ( Vertex (vec3 Board.right Board.top 10) sideColor4
+      , Vertex (vec3 Board.right Board.bottom 0) sideColor4
+      , Vertex (vec3 Board.right Board.bottom 10) sideColor4
+      )
+    , --backdrop
+      ( Vertex (vec3 0 0 -1) backdrop
+      , Vertex (vec3 0 Screen.height -1) backdrop
+      , Vertex (vec3 Screen.width Screen.height -1) backdrop
+      )
+    , ( Vertex (vec3 Screen.width Screen.height -1) backdrop
+      , Vertex (vec3 0 0 -1) backdrop
+      , Vertex (vec3 Screen.width 0 -1) backdrop
       )
     ]
 
