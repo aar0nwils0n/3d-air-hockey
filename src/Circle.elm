@@ -13,7 +13,7 @@ type alias Circle =
 
 
 radius =
-    15
+    Screen.width * 0.025
 
 
 updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
@@ -22,27 +22,13 @@ updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
             toFloat clientX
 
         newX =
-            if clientXFloat < Board.left + radius then
-                Board.left + radius
-
-            else if clientXFloat > Board.right - radius then
-                Board.right - radius
-
-            else
-                clientXFloat
+            clamp (Board.left + radius) (Board.right - radius) clientXFloat
 
         clientYFloat =
             toFloat -clientY |> (+) Screen.width
 
         newY =
-            if clientYFloat < Board.bottom + radius then
-                Board.bottom + radius
-
-            else if clientYFloat > Board.top - radius then
-                Board.top - radius
-
-            else
-                clientYFloat
+            clamp (Board.bottom + radius) (Screen.height * 0.5) clientYFloat
     in
     Circle newX newY xSpeed ySpeed
 
@@ -207,14 +193,14 @@ strikePuck puck striker =
     in
     { puck
         | xSpeed =
-            clamp (Screen.width * -0.025)
-                (Screen.width * 0.025)
+            clamp (Screen.width * -0.02)
+                (Screen.width * 0.02)
             <|
                 (cos angle * -(totalStrikerSpeed + abs puck.xSpeed))
                     - (cos angle * abs puck.ySpeed)
         , ySpeed =
-            clamp (Screen.width * -0.025)
-                (Screen.width * 0.025)
+            clamp (Screen.width * -0.02)
+                (Screen.width * 0.02)
             <|
                 (sin angle * -(totalStrikerSpeed + abs puck.ySpeed))
                     - (sin angle * abs puck.xSpeed)
