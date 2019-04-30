@@ -1,4 +1,4 @@
-module Board exposing (bottom, left, right, top)
+module Board exposing (bottom, left, right, slotLeft, slotRight, top)
 
 import Screen
 
@@ -17,3 +17,11 @@ left =
 
 right =
     Screen.width * 0.7
+
+
+slotLeft =
+    Screen.width * 0.45
+
+
+slotRight =
+    Screen.width * 0.55

@@ -66,7 +66,7 @@ board =
         backdrop =
             vec3 0 0 0
     in
-    [ --flor
+    [ --floor
       ( Vertex (vec3 Board.left Board.top 0) bottomColor
       , Vertex (vec3 Board.left Board.bottom 0) bottomColor
       , Vertex (vec3 Board.right Board.bottom 0) bottomColor
@@ -83,6 +83,24 @@ board =
     , ( Vertex (vec3 Board.left Board.top 10) sideColor2
       , Vertex (vec3 Board.right Board.top 10) sideColor2
       , Vertex (vec3 Board.right Board.top 0) sideColor2
+      )
+    , --top slot
+      ( Vertex (vec3 Board.slotLeft (Board.top * 0.999) 0) backdrop
+      , Vertex (vec3 Board.slotRight (Board.top * 0.999) 0) backdrop
+      , Vertex (vec3 Board.slotLeft (Board.top * 0.999) 5) backdrop
+      )
+    , ( Vertex (vec3 Board.slotLeft (Board.top * 0.999) 5) backdrop
+      , Vertex (vec3 Board.slotRight (Board.top * 0.999) 5) backdrop
+      , Vertex (vec3 Board.slotRight (Board.top * 0.999) 0) backdrop
+      )
+    , --bottom slot
+      ( Vertex (vec3 Board.slotLeft (Board.bottom * 1.002) 0) backdrop
+      , Vertex (vec3 Board.slotRight (Board.bottom * 1.002) 0) backdrop
+      , Vertex (vec3 Board.slotLeft (Board.bottom * 1.002) 5) backdrop
+      )
+    , ( Vertex (vec3 Board.slotLeft (Board.bottom * 1.002) 5) backdrop
+      , Vertex (vec3 Board.slotRight (Board.bottom * 1.002) 5) backdrop
+      , Vertex (vec3 Board.slotRight (Board.bottom * 1.002) 0) backdrop
       )
     , --bottom
       ( Vertex (vec3 Board.left Board.bottom 0) sideColor2

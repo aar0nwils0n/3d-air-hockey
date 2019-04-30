@@ -111,6 +111,10 @@ slowDown xSpeed ySpeed =
     ( nanTo0 newXSpeed, nanTo0 newYSpeed )
 
 
+inSlot x y =
+    (x > (Board.slotLeft + radius) && x < (Board.slotRight - radius)) || (y > Board.top) || (y < Board.bottom)
+
+
 incrementCirclePosition { x, y, xSpeed, ySpeed } =
     let
         ( newXSpeed, newYSpeed ) =
@@ -130,7 +134,7 @@ incrementCirclePosition { x, y, xSpeed, ySpeed } =
                 newXSpeed
 
         newYSpeed2 =
-            if incrementedY >= Board.top - radius || incrementedY <= Board.bottom + radius then
+            if not (inSlot x y) && (incrementedY >= Board.top - radius || incrementedY <= Board.bottom + radius) then
                 -newYSpeed
 
             else
@@ -153,10 +157,10 @@ incrementCirclePosition { x, y, xSpeed, ySpeed } =
             y + newYSpeed
 
         newY =
-            if increasedY > Board.top - radius then
+            if not (inSlot x y) && (increasedY > Board.top - radius) then
                 Board.top - radius
 
-            else if increasedY < Board.bottom + radius then
+            else if not (inSlot x y) && (increasedY < Board.bottom + radius) then
                 Board.bottom + radius
 
             else
