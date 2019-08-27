@@ -38,10 +38,11 @@ cylinder x y r g b =
         |> (++) (tube x y 0 height Circle.radius 100 <| vec3 r2 g2 b2)
 
 
-mesh : Circle -> Circle -> Mesh Vertex
-mesh striker puck =
+mesh : Circle -> Circle -> Circle -> Mesh Vertex
+mesh striker puck bot =
     cylinder striker.x striker.y 0.9 0.25 0.25
         |> (++) (cylinder puck.x puck.y 0.2 0.7 0.2)
+        |> (++) (cylinder bot.x bot.y 0.2 0.2 0.7)
         |> (++) board
         |> WebGL.triangles
 

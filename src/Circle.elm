@@ -1,4 +1,4 @@
-module Circle exposing (Circle, handlePotentialStrikes, incrementCirclePosition, radius, slowDown, updateCircleWithMouse, updateCircleWithSpeed)
+module Circle exposing (Circle, checkForPuckAndScoreIncrease, handlePotentialStrikes, incrementCirclePosition, radius, slowDown, updateBot, updateCircleWithMouse, updateCircleWithSpeed)
 
 import Board
 import Screen
@@ -35,6 +35,48 @@ updateCircleWithMouse { clientX, clientY } { x, y, xSpeed, ySpeed } =
 
 updateCircleWithSpeed oldCircle newCircle =
     { newCircle | xSpeed = newCircle.x - oldCircle.x, ySpeed = newCircle.y - oldCircle.y }
+
+
+updateBot bot puck =
+    let
+        increment =
+            Screen.width / 100
+
+        newX =
+            if abs (bot.x - puck.x) < increment then
+                bot.x
+
+            else if bot.x > puck.x then
+                bot.x - increment
+
+            else
+                bot.x + increment
+
+        newY =
+            if puck.y < (Screen.height / 2 - radius) then
+                bot.y + 1
+
+            else if bot.y < puck.y then
+                bot.y + increment
+
+            else
+                bot.y - increment
+    in
+    { bot
+        | x = clamp (Board.left + radius) (Board.right - radius) newX
+        , y = clamp (Screen.height * 0.5) (Board.top - radius) newY
+    }
+
+
+checkForPuckAndScoreIncrease puck =
+    if puck.y < Board.bottom - radius then
+        ( True, False )
+
+    else if puck.y > Board.top + radius then
+        ( False, True )
+
+    else
+        ( False, False )
 
 
 slowDownButDontReverse speed =
